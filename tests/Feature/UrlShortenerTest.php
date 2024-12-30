@@ -3,11 +3,11 @@
 use App\Models\ShortUrl;
 
 /**
- * Test the encode endpoint with a valid URL.
+ * Test encoding a brand-new URL returns 201 and the correct JSON structure.
  */
-test('it encodes a valid URL', function () {
+test('it encodes a new URL and returns 201', function () {
     $response = $this->postJson('/api/encode', [
-        'original_url' => 'https://www.example.com/my/long/url'
+        'original_url' => 'https://www.example.com/new/url',
     ]);
 
     $response->assertStatus(201)
@@ -15,26 +15,43 @@ test('it encodes a valid URL', function () {
             'original_url',
             'short_url',
         ]);
+
+    // Ensure the database actually contains the new record
+    $this->assertDatabaseHas('short_urls', [
+        'original_url' => 'https://www.example.com/new/url',
+    ]);
 });
 
 /**
- * Test the encode endpoint fails when the same URL is submitted twice
- * because the validation uses 'unique:short_urls' on original_url.
+ * Test encoding the same URL again returns 200,
+ * and returns the same short_url record as before.
  */
-test('it fails to encode a duplicate URL', function () {
-    // First creation
-    ShortUrl::create([
-        'original_url' => 'https://www.example.com/my/long/url',
-        'short_url'    => 'http://short.est/AbCdEf',
-        'short_code'    => 'AbCdEf',
+test('it returns the existing short URL with a 200 if the original URL has been shortened before', function () {
+    // First call: 201
+    $firstResponse = $this->postJson('/api/encode', [
+        'original_url' => 'https://www.example.com/duplicate/url',
     ]);
+    $firstResponse->assertStatus(201);
+    $firstShortUrl = $firstResponse->json('short_url');
 
-    // Second creation attempt with the same original_url
+    // Second call for the same URL: 200, same short_url
+    $secondResponse = $this->postJson('/api/encode', [
+        'original_url' => 'https://www.example.com/duplicate/url',
+    ]);
+    $secondResponse->assertStatus(200);
+    $secondShortUrl = $secondResponse->json('short_url');
+
+    expect($secondShortUrl)->toBe($firstShortUrl); // The same short link
+});
+
+/**
+ * Test validation: sending an invalid URL should return 422.
+ */
+test('it returns 422 when the original_url is invalid', function () {
     $response = $this->postJson('/api/encode', [
-        'original_url' => 'https://www.example.com/my/long/url'
+        'original_url' => 'not-a-real-url',
     ]);
 
-    // Should fail with 422 because original_url must be unique
     $response->assertStatus(422)
         ->assertJsonValidationErrors('original_url');
 });
