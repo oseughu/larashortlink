@@ -61,6 +61,17 @@ class UrlShortenerController extends Controller
         ], 200);
     }
 
+    public function redirectToOriginalUrl($shortCode)
+    {
+        $shortUrl = ShortUrl::firstWhere('short_code', $shortCode);
+
+        if (!$shortUrl) {
+            abort(404);
+        }
+
+        return redirect()->away($shortUrl->original_url);
+    }
+
     /**
      * Generate a unique short code of a given length, retrying until it's unique.
      */
