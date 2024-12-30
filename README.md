@@ -2,10 +2,10 @@
 
 This is a simple URL shortening service built with Laravel. It provides two endpoints:
 
-Base URL: [https://larashortlink.oseughu.com](https://larashortlink.oseughu.com)
+Base URL: [https://larashortlink.oseughu.com/api](https://larashortlink.oseughu.com/api)
 
-- **`/api/encode`** (POST): Accepts a JSON body or Query Param with an `original_url` and returns the created short URL.
-- **`/api/decode`** (POST): Accepts a JSON body or Query Param with a `short_url` and returns the original URL.
+- **`/encode`** (POST): Accepts a JSON body or Query Param with an `original_url` and returns the created short URL.
+- **`/decode`** (POST): Accepts a JSON body or Query Param with a `short_url` and returns the original URL.
 
 You can use Postman or any other API testing tool to test the endpoints.
 
