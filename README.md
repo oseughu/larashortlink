@@ -24,7 +24,7 @@ You need to clone the repository and run the following command to install the de
 
 ```bash
 git clone https://github.com/oseughu/larashortlink.git
-composer install
+cd larashortlink && composer install
 php artisan serve
 ```
 
