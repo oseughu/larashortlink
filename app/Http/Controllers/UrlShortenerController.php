@@ -28,8 +28,8 @@ class UrlShortenerController extends Controller
         }
 
         $shortCode = $this->generateUniqueShortCode();
-        $shortLinkPrefix = rtrim(env('APP_SHORT_URL_PREFIX', 'http://short.est'), '/');
-        $shortenedUrl = "{$shortLinkPrefix}/{$shortCode}";
+        $shortLinkPrefix = rtrim(env('APP_SHORT_URL_PREFIX', 'https://short.est'), '/');
+        $shortenedUrl = "$shortLinkPrefix/$shortCode";
 
         $shortUrl = ShortUrl::create([
             'original_url' => $data['original_url'],
@@ -46,7 +46,7 @@ class UrlShortenerController extends Controller
     /**
      * Decodes a shortened URL to its original URL.
      * Endpoint: POST /api/decode
-     * Body (JSON or Query Params): { "short_code": "abc123" }
+     * Body (JSON or Query Params):  "short_code": "abc123" }
      */
     public function decode(Request $request)
     {
@@ -75,11 +75,15 @@ class UrlShortenerController extends Controller
     /**
      * Generate a unique short code of a given length, retrying until it's unique.
      */
-    private function generateUniqueShortCode(int $length = 4): string
+    private function generateUniqueShortCode(): string
     {
-        do {
-            $shortCode = Str::random($length);
-        } while (ShortUrl::where('short_code', $shortCode)->exists());
+        $shortCodeLength = (int) env('APP_SHORT_CODE_LENGTH', 4);
+        $shortCode = Str::random($shortCodeLength);
+        $shortCodeExists = ShortUrl::firstWhere('short_code', $shortCode);
+
+        if ($shortCodeExists) {
+            return $this->generateUniqueShortCode($shortCodeLength);
+        }
 
         return $shortCode;
     }

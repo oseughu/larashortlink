@@ -7,6 +7,8 @@ Base URL: [https://larashortlink.oseughu.com/api](https://larashortlink.oseughu.
 - **`/encode`** (POST): Accepts a JSON body or Query Param with an `original_url` and returns the created short URL.
 - **`/decode`** (POST): Accepts a JSON body or Query Param with a `short_url` and returns the original URL.
 
+- Additionally, the URL **`https://larashortlink.oseughu.com/{shortCode}`** redirects to the original url using the shortCode from the `short_url`.
+
 You can use Postman or any other API testing tool to test the endpoints.
 
 ## Requirements

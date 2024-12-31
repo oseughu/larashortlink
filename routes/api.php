@@ -14,4 +14,3 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/encode', [UrlShortenerController::class, 'encode']);
 Route::post('/decode', [UrlShortenerController::class, 'decode']);
-Route::post('/{shortCode}', [UrlShortenerController::class, 'redirectToOriginalUrl']);
