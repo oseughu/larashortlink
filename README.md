@@ -9,7 +9,7 @@ Base URL: [https://larashortlink.oseughu.com/api](https://larashortlink.oseughu.
 
 - Additionally, the URL **`https://larashortlink.oseughu.com/{shortCode}`** redirects to the original url using the shortCode from the `short_url`.
 
-You can use Postman or any other API testing tool to test the endpoints.
+You can use Postman or any other API testing tool to test the endpoints. I would recommend [Bruno](https://usebruno.com) which I use in my daily workflow.
 
 ## Requirements
 
