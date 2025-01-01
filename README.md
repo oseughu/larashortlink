@@ -1,13 +1,13 @@
-# Larashortlink - A URL Shortening Service
+# Laralink - A URL Shortening Service
 
 This is a simple URL shortening service built with Laravel. It provides two endpoints:
 
-Base URL: [https://larashortlink.oseughu.com/api](https://larashortlink.oseughu.com/api)
+Base URL: [https://laralink.oseughu.com/api](https://laralink.oseughu.com/api)
 
 - **`/encode`** (POST): Accepts a JSON body or Query Param with an `original_url` and returns the created short URL.
 - **`/decode`** (POST): Accepts a JSON body or Query Param with a `short_url` and returns the original URL.
 
-- Additionally, the URL **`https://larashortlink.oseughu.com/{shortCode}`** redirects to the original url using the shortCode from the `short_url`.
+- Additionally, the URL **`https://laralink.oseughu.com/{shortCode}`** redirects to the original url using the shortCode from the `short_url`.
 
 You can use Postman or any other API testing tool to test the endpoints. I would recommend [Bruno](https://usebruno.com) which I use in my daily workflow.
 

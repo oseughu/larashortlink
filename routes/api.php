@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\UrlShortenerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UrlShortenerController;
 
 Route::get('/', function () {
     return response()->json(['message' => 'Welcome to my Laravel Link Shortener!']);

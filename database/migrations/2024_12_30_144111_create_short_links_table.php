@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('short_urls', function (Blueprint $table) {
+        Schema::create('short_links', function (Blueprint $table) {
             $table->id();
             $table->string('original_url')->unique();
             $table->string('short_code')->unique();
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('short_urls');
+        Schema::dropIfExists('short_links');
     }
 };

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ShortLink;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Models\ShortUrl;
 
 class UrlShortenerController extends Controller
 {
@@ -19,27 +19,28 @@ class UrlShortenerController extends Controller
             'original_url' => 'required|url',
         ]);
 
-        $existingUrl = ShortUrl::firstWhere('original_url', $data['original_url']);
+        $existingUrl = ShortLink::findByOriginalUrl($data['original_url']);
+
         if ($existingUrl) {
             return response()->json([
                 'original_url' => $existingUrl->original_url,
-                'short_url'    => $existingUrl->short_url,
+                'short_url' => $existingUrl->short_url,
             ]);
         }
 
         $shortCode = $this->generateUniqueShortCode();
-        $shortLinkPrefix = rtrim(env('APP_SHORT_URL_PREFIX', 'https://short.est'), '/');
+        $shortLinkPrefix = rtrim(env('APP_SHORT_URL_PREFIX', 'https://l.nk'), '/');
         $shortenedUrl = "$shortLinkPrefix/$shortCode";
 
-        $shortUrl = ShortUrl::create([
+        $shortLink = ShortLink::create([
             'original_url' => $data['original_url'],
-            'short_code'   => $shortCode,
-            'short_url'    => $shortenedUrl,
+            'short_code' => $shortCode,
+            'short_url' => $shortenedUrl,
         ]);
 
         return response()->json([
-            'original_url' => $shortUrl->original_url,
-            'short_url'    => $shortenedUrl,
+            'original_url' => $shortLink->original_url,
+            'short_url' => $shortLink->short_url,
         ], 201);
     }
 
@@ -51,25 +52,29 @@ class UrlShortenerController extends Controller
     public function decode(Request $request)
     {
         $data = $request->validate([
-            'short_url' => 'required|url|exists:short_urls',
+            'short_url' => 'required|url|exists:short_links',
         ]);
 
-        $shortUrl = ShortUrl::firstWhere('short_url', $data['short_url']);
+        $shortLink = ShortLink::findByShortUrl($data['short_url']);
 
         return response()->json([
-            'original_url' => $shortUrl->original_url,
-        ], 200);
+            'original_url' => $shortLink->original_url,
+        ]);
     }
 
+    /**
+     * Redirects a shortcode to its original URL.
+     * Endpoint: GET /{short_code}
+     */
     public function redirectToOriginalUrl($shortCode)
     {
-        $shortUrl = ShortUrl::firstWhere('short_code', $shortCode);
+        $shortLink = ShortLink::findByShortCode($shortCode);
 
-        if (!$shortUrl) {
+        if (! $shortLink) {
             abort(404);
         }
 
-        return redirect()->away($shortUrl->original_url);
+        return redirect()->away($shortLink->original_url);
     }
 
     /**
@@ -79,12 +84,12 @@ class UrlShortenerController extends Controller
     {
         $shortCodeLength = (int) env('APP_SHORT_CODE_LENGTH', 4);
         $shortCode = Str::random($shortCodeLength);
-        $shortCodeExists = ShortUrl::firstWhere('short_code', $shortCode);
+        $shortCodeExists = ShortLink::findByShortCode($shortCode);
 
         if ($shortCodeExists) {
-            return $this->generateUniqueShortCode($shortCodeLength);
+            return $this->generateUniqueShortCode();
         }
 
-        return $shortCode;
+        return strtolower($shortCode);
     }
 }

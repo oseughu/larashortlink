@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\ShortUrl;
+use App\Models\ShortLink;
 
 /**
  * Test encoding a brand-new URL returns 201 and the correct JSON structure.
@@ -17,7 +17,7 @@ test('it encodes a new URL and returns 201', function () {
         ]);
 
     // Ensure the database actually contains the new record
-    $this->assertDatabaseHas('short_urls', [
+    $this->assertDatabaseHas('short_links', [
         'original_url' => 'https://www.example.com/new/url',
     ]);
 });
@@ -57,14 +57,14 @@ test('it returns 422 when the original_url is invalid', function () {
 });
 
 test('it decodes a valid short URL (given code mismatch in snippet)', function () {
-    ShortUrl::create([
+    ShortLink::create([
         'original_url' => 'https://www.example.com/long/url',
-        'short_url'    => 'http://short.est/abc123',
-        'short_code'    => 'abc123',
+        'short_url' => 'http://short.est/abc123',
+        'short_code' => 'abc123',
     ]);
 
     $response = $this->postJson('/api/decode', [
-        'short_url' => 'http://short.est/abc123'
+        'short_url' => 'http://short.est/abc123',
     ]);
 
     // Expect a 200 based on the snippet’s final return if everything passes
@@ -80,7 +80,7 @@ test('it decodes a valid short URL (given code mismatch in snippet)', function (
 test('it returns validation errors if the short_url is missing in decode', function () {
     $response = $this->postJson('/api/decode', []);
 
-    // 'short_url' => 'required|url|exists:short_urls' will fail
+    // 'short_url' => 'required|url|exists:short_links' will fail
     $response->assertStatus(422)
         ->assertJsonValidationErrors('short_url');
 });
@@ -106,7 +106,7 @@ test('it returns validation error if the short_url does not exist in the db', fu
         'short_url' => 'http://short.est/fake',
     ]);
 
-    // Fails the 'exists:short_urls' validation
+    // Fails the 'exists:short_links' validation
     $response->assertStatus(422)
         ->assertJsonValidationErrors('short_url');
 });
