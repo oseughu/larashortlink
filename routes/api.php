@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return response()->json(['message' => 'Welcome to my Laravel Link Shortener!']);
+    return response()->json(['message' => 'Welcome to Ose\'s Laravel Link Shortener!']);
 });
 
 Route::get('/user', function (Request $request) {
