@@ -52,10 +52,16 @@ class UrlShortenerController extends Controller
     public function decode(Request $request)
     {
         $data = $request->validate([
-            'short_url' => 'required|url|exists:short_links',
+            'short_url' => 'required|url',
         ]);
 
         $shortLink = ShortLink::findByShortUrl($data['short_url']);
+
+        if (!$shortLink) {
+            return response()->json([
+                'error' => 'URL not found',
+            ], 404);
+        }
 
         return response()->json([
             'original_url' => $shortLink->original_url,
@@ -70,7 +76,7 @@ class UrlShortenerController extends Controller
     {
         $shortLink = ShortLink::findByShortCode($shortCode);
 
-        if (! $shortLink) {
+        if (!$shortLink) {
             abort(404);
         }
 

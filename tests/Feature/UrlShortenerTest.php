@@ -106,7 +106,8 @@ test('it returns validation error if the short_url does not exist in the db', fu
         'short_url' => 'http://short.est/fake',
     ]);
 
-    // Fails the 'exists:short_links' validation
-    $response->assertStatus(422)
-        ->assertJsonValidationErrors('short_url');
+    $response->assertStatus(404)
+        ->assertJson([
+            'error' => 'URL not found',
+        ]);
 });
