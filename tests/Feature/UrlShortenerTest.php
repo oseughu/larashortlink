@@ -110,3 +110,57 @@ test('it returns validation error if the short_url does not exist in the db', fu
     $response->assertStatus(404)
         ->assertJson(['error' => 'URL not found']);
 });
+
+/**
+ * Test that encoding a URL with different cases returns the same short URL.
+ */
+test('it encodes URLs case-insensitively', function () {
+    $urlLower = 'https://www.example.com/case-test';
+    $urlUpper = 'https://www.EXAMPLE.com/CASE-TEST';
+
+    // Encode the lowercase URL
+    $responseLower = $this->postJson('/api/encode', [
+        'original_url' => $urlLower,
+    ]);
+    $responseLower->assertStatus(201);
+    $shortUrlLower = $responseLower->json('short_url');
+
+    // Encode the uppercase URL
+    $responseUpper = $this->postJson('/api/encode', [
+        'original_url' => $urlUpper,
+    ]);
+    $responseUpper->assertStatus(200);
+    $shortUrlUpper = $responseUpper->json('short_url');
+
+    // Assert both short URLs are the same
+    expect($shortUrlUpper)->toBe($shortUrlLower);
+});
+
+/**
+ * Test that decoding a short URL with different cases returns the same original URL.
+ */
+test('it decodes short URLs case-insensitively', function () {
+    $originalUrl = 'https://www.example.com/long/url';
+    $shortCode = 'AbC123';
+    $shortUrl = "http://short.est/{$shortCode}";
+
+    // Create a short link with mixed case short_code
+    ShortLink::create([
+        'original_url' => $originalUrl,
+        'short_url' => $shortUrl,
+        'short_code' => $shortCode,
+    ]);
+
+    // Decode using different cases of the short URL
+    $response = $this->postJson('/api/decode', [
+        'short_url' => Str::lower($shortUrl),
+    ]);
+    $response->assertStatus(200)
+        ->assertJson(['original_url' => $originalUrl]);
+
+    $response = $this->postJson('/api/decode', [
+        'short_url' => Str::upper($shortUrl),
+    ]);
+    $response->assertStatus(200)
+        ->assertJson(['original_url' => $originalUrl]);
+});
