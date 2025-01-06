@@ -10,30 +10,26 @@ class ShortLink extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'original_url',
-        'short_url',
-        'short_code',
-    ];
+    protected $fillable = ['original_url', 'short_url', 'short_code'];
 
     protected function originalUrl(): Attribute
     {
         return Attribute::make(
-            set: fn (string $value) => strtolower($value),
+            set: fn(string $value) => strtolower($value),
         );
     }
 
     protected function shortUrl(): Attribute
     {
         return Attribute::make(
-            set: fn (string $value) => strtolower($value),
+            set: fn(string $value) => strtolower($value),
         );
     }
 
     protected function shortCode(): Attribute
     {
         return Attribute::make(
-            set: fn (string $value) => strtolower($value),
+            set: fn(string $value) => strtolower($value),
         );
     }
 
