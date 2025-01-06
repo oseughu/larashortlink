@@ -28,6 +28,7 @@ class UrlShortenerController extends Controller
             ]);
         }
 
+        // ideally, we'd use a service to generate the short code
         $shortCode = $this->generateUniqueShortCode();
         $shortLinkPrefix = rtrim(env('APP_SHORT_URL_PREFIX', 'https://l.nk'), '/');
         $shortenedUrl = "$shortLinkPrefix/$shortCode";
@@ -90,10 +91,9 @@ class UrlShortenerController extends Controller
     {
         $shortCodeLength = (int) env('APP_SHORT_CODE_LENGTH', 4);
         $shortCode = Str::random($shortCodeLength);
-        $shortCodeExists = ShortLink::findByShortCode($shortCode);
 
-        if ($shortCodeExists) {
-            return $this->generateUniqueShortCode();
+        while (ShortLink::where('short_code', $shortCode)->exists()) {
+            $shortCode = Str::random($shortCodeLength);
         }
 
         return strtolower($shortCode);
