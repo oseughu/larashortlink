@@ -28,7 +28,7 @@ class UrlShortenerController extends Controller
             ]);
         }
 
-        // ideally, we'd use a service to generate the short code
+        // ideally, we'd use a service to generate the short url
         $shortCode = $this->generateUniqueShortCode();
         $shortLinkPrefix = rtrim(env('APP_SHORT_URL_PREFIX', 'https://l.nk'), '/');
         $shortenedUrl = "$shortLinkPrefix/$shortCode";
